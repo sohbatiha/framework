@@ -10,6 +10,13 @@ use Orchestra\Testbench\TestCase;
  */
 class BladeTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->artisan('view:clear')->run();
+    }
+
     public function test_basic_blade_rendering()
     {
         $view = View::make('hello', ['name' => 'Taylor'])->render();
