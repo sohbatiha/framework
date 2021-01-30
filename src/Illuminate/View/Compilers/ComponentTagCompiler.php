@@ -193,7 +193,7 @@ class ComponentTagCompiler
 
             $attributes = $this->getAttributesFromAttributeString($matches['attributes']);
 
-            return $this->componentString($matches[1], $attributes)."\n@endcomponentClass ";
+            return $this->componentString($matches[1], $attributes)."\n@endComponentClass##END-COMPONENT-CLASS##";
         }, $value);
     }
 
@@ -230,7 +230,7 @@ class ComponentTagCompiler
             $parameters = $data->all();
         }
 
-        return " @component('{$class}', '{$component}', [".$this->attributesToString($parameters, $escapeBound = false).'])
+        return "##BEGIN-COMPONENT-CLASS##@component('{$class}', '{$component}', [".$this->attributesToString($parameters, $escapeBound = false).'])
 <?php if (isset($attributes) && $constructor = (new ReflectionClass('.$class.'::class))->getConstructor()): ?>
 <?php $attributes = $attributes->except(collect($constructor->getParameters())->map->getName()->all()); ?>
 <?php endif; ?>
@@ -387,7 +387,7 @@ class ComponentTagCompiler
      */
     protected function compileClosingTags(string $value)
     {
-        return preg_replace("/<\/\s*x[-\:][\w\-\:\.]*\s*>/", ' @endcomponentClass ', $value);
+        return preg_replace("/<\/\s*x[-\:][\w\-\:\.]*\s*>/", ' @endComponentClass##END-COMPONENT-CLASS##', $value);
     }
 
     /**
@@ -463,6 +463,10 @@ class ComponentTagCompiler
                 $value = "'".$this->compileAttributeEchos($value)."'";
             }
 
+            if (Str::startsWith($attribute, '::')) {
+                $attribute = substr($attribute, 1);
+            }
+
             return [$attribute => $value];
         })->toArray();
     }
@@ -493,7 +497,7 @@ class ComponentTagCompiler
     {
         $pattern = "/
             (?:^|\s+)     # start of the string or whitespace between attributes
-            :             # attribute needs to start with a semicolon
+            :(?!:)        # attribute needs to start with a single colon
             ([\w\-:.@]+)  # match the actual attribute name
             =             # only match attributes that have a value
         /xm";

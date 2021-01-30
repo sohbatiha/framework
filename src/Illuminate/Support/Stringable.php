@@ -4,12 +4,13 @@ namespace Illuminate\Support;
 
 use Closure;
 use Illuminate\Support\Traits\Macroable;
+use Illuminate\Support\Traits\Tappable;
 use JsonSerializable;
 use Symfony\Component\VarDumper\VarDumper;
 
 class Stringable implements JsonSerializable
 {
-    use Macroable;
+    use Macroable, Tappable;
 
     /**
      * The underlying string value.
@@ -401,6 +402,17 @@ class Stringable implements JsonSerializable
     }
 
     /**
+     * Call the given callback and return a new string.
+     *
+     * @param callable $callback
+     * @return static
+     */
+    public function pipe(callable $callback)
+    {
+        return new static(call_user_func($callback, $this));
+    }
+
+    /**
      * Get the plural form of an English word.
      *
      * @param  int  $count
@@ -724,7 +736,7 @@ class Stringable implements JsonSerializable
     }
 
     /**
-     * Convert the object into something JSON serializable.
+     * Convert the object to a string when JSON encoded.
      *
      * @return string
      */

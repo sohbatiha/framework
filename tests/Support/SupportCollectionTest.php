@@ -78,8 +78,8 @@ class SupportCollectionTest extends TestCase
 
         $this->assertSame('book', $data->firstWhere('material', 'paper')['type']);
         $this->assertSame('gasket', $data->firstWhere('material', 'rubber')['type']);
-        $this->assertNull($data->firstWhere('material', 'nonexistant'));
-        $this->assertNull($data->firstWhere('nonexistant', 'key'));
+        $this->assertNull($data->firstWhere('material', 'nonexistent'));
+        $this->assertNull($data->firstWhere('nonexistent', 'key'));
     }
 
     /**
@@ -3592,8 +3592,8 @@ class SupportCollectionTest extends TestCase
         }));
 
         $data = new $collection([
-            'foo' => 'bar',	            'foo' => 'bar',
-            'baz' => 'qux',	            'baz' => 'qux',
+            'foo' => 'bar',
+            'baz' => 'qux',
         ]);
         $this->assertEquals('foobarbazqux', $data->reduce(function ($carry, $element, $key) {
             return $carry .= $key.$element;
